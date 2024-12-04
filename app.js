@@ -30,6 +30,13 @@ setInterval(() => {
     logMemoryUsage();
 }, 5000)
 
+if (global.gc) {
+    global.gc();  // Forces a GC cycle
+} else {
+    console.log('Garbage collection is not exposed');
+}
+
+
 const PORT = process.env.PORT || 5000;
 
 const now = moment().tz('Asia/Manila');
