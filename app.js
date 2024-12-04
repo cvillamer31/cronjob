@@ -8,6 +8,12 @@ const  { sendin_in_out }  = require('./all_function/hcs_function');
 const app = express();
 app.use(express.json());
 
+console.log('DB Connection Config:', {
+    host: process.env.HOST,
+    user: process.env.USER,
+    database: process.env.DB,
+    port: process.env.PORT,
+});
 
 
 
