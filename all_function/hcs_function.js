@@ -55,7 +55,7 @@ async function send_to_HCS(json_data){
 
     try {
         const response = await axios.post(url, data_to_send, { httpsAgent: agent });
-        // console.log('Response:', response.data);
+        console.log('Response:', response.data);
         return response.data; // Return the successful response data
     } catch (error) {
         // console.error('Error:', error.response ? error.response.data : error.message);

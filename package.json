@@ -4,8 +4,8 @@
   "description": "Run the cronjob to automate the process",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js",
-    "test": "jest"
+    "start": "nodemon --max-old-space-size=4096 app.js",
+    "test": "jest --runInBand --max-old-space-size=4096"
   },
   "author": "Christian Villamer",
   "license": "ISC",
