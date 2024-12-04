@@ -33,6 +33,7 @@ setInterval(() => {
 if (global.gc) {
     global.gc();  // Forces a GC cycle
 } else {
+    global.gc();
     console.log('Garbage collection is not exposed');
 }
 
