@@ -13,7 +13,7 @@ console.log('DB Connection Config:', {
     user: process.env.USER_DATA,
     database: process.env.DB,
     password: process.env.PASSWORD_DB,
-    port: process.env.PORT,
+    // port: process.env.PORT,
 });
 
 
