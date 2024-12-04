@@ -7,7 +7,7 @@ async function connectToDatabase() {
             user: process.env.USER_DATA,
             password: process.env.PASSWORD_DB,
             database: process.env.DB,
-            port: 5013,
+            // port: 5013,
         });
         console.log('Connected to MySQL!');
         return connection;

@@ -30,14 +30,14 @@ app.get('/health', (req, res) => {
 
 // every Seconds = * * * * * *
 // every Min =  * * * * *
-// cron.schedule('* * * * * *', async () => {
-//     try {
-//         const data_val = await sendin_in_out(date);
-//         console.log(data_val)
-//     } catch (error) {
-//         console.log(error)
-//     }
-// });
+cron.schedule('* * * * * *', async () => {
+    try {
+        const data_val = await sendin_in_out(date);
+        console.log(data_val)
+    } catch (error) {
+        console.log(error)
+    }
+});
 
 
 cron.schedule('0 5,22 * * *', async () => {
