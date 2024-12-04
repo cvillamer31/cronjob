@@ -46,6 +46,7 @@ async function send_to_HCS(json_data){
 
 
     const url = process.env.HCS_URL+'/public/api/hrEmployeeTimeLog/logRemoteTime'
+    
     // await axios.post(url, data_to_send,  { httpsAgent: agent })
     // .then(response => {
     //     // console.log('Response:', response.data);
@@ -62,6 +63,7 @@ async function send_to_HCS(json_data){
         return response.data; // Return the successful response data
     } catch (error) {
         // console.error('Error:', error.response ? error.response.data : error.message);
+        console.log(url)
         return { error: error.response ? error.response.data : error.message }; // Return the error
     }
 }
