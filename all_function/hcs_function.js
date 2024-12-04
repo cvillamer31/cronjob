@@ -111,14 +111,14 @@ async function sendin_in_out(date) {
         for (let index = 0; index <= In_data.length - 1; index++) {
             const element = In_data[index];
             const data = await send_to_HCS(element)
-            // console.log("in", data)
+            console.log("in", data)
         }
         const Out_data = await getOut_today(date);
 
         for (let index = 0; index <= Out_data.length - 1; index++) {
             const element = Out_data[index];
             const data = await send_to_HCS(element)
-            // console.log("out",data)
+            console.log("out",data)
         }
         
 

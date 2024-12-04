@@ -33,7 +33,7 @@ app.get('/health', (req, res) => {
 cron.schedule('* * * * * *', async () => {
     try {
         const data_val = await sendin_in_out(date);
-        console.log(data_val)
+        // console.log(data_val)
     } catch (error) {
         console.log(error)
     }
