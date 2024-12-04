@@ -44,6 +44,9 @@ cron.schedule('0 5,22 * * *', async () => {
     try {
         const data_val = await sendin_in_out(date);
 
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
         console.log(`date: ${date}`)
         // console.log(data_val)
     } catch (error) {
