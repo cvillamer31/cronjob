@@ -25,7 +25,13 @@ const date = now.format('YYYY-MM-DD');
 const time = now.format('HH:mm:ss');
 
 app.get('/health', (req, res) => {
-    res.send(`Server is up and running date: ${date}`);
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+
+    // console.log(`Triggered at: ${now}`);
+    // console.log(`Hours: ${hours}, Minutes: ${minutes}`);
+    res.json({message: `Server is up and running`, server_date: now , server_hours: hours+":"+minutes});
 });
 
 // every Seconds = * * * * * *
@@ -39,22 +45,22 @@ app.get('/health', (req, res) => {
 //     }
 // });
 
-cron.schedule('* * * * * *', async () => {
-    try {
-        const now = new Date();
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
+// cron.schedule('* * * * * *', async () => {
+//     try {
+//         const now = new Date();
+//         const hours = now.getHours();
+//         const minutes = now.getMinutes();
 
-        console.log(`Triggered at: ${now}`);
-        console.log(`Hours: ${hours}, Minutes: ${minutes}`);
-        // console.log(data_val)
-    } catch (error) {
-        console.log(error)
-    }
-});
+//         console.log(`Triggered at: ${now}`);
+//         console.log(`Hours: ${hours}, Minutes: ${minutes}`);
+//         // console.log(data_val)
+//     } catch (error) {
+//         console.log(error)
+//     }
+// });
 
 
-cron.schedule('0 5,22 * * *', async () => {
+cron.schedule('0 7,22 * * *', async () => {
     try {
         const data_val = await sendin_in_out(date);
 
