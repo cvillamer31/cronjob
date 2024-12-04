@@ -63,7 +63,7 @@ async function send_to_HCS(json_data){
         return response.data; // Return the successful response data
     } catch (error) {
         // console.error('Error:', error.response ? error.response.data : error.message);
-        console.log(url)
+        console.log(data_to_send)
         return { error: error.response ? error.response.data : error.message }; // Return the error
     }
 }
