@@ -39,6 +39,20 @@ app.get('/health', (req, res) => {
 //     }
 // });
 
+cron.schedule('* * * * * *', async () => {
+    try {
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+
+        console.log(`Triggered at: ${now}`);
+        console.log(`Hours: ${hours}, Minutes: ${minutes}`);
+        // console.log(data_val)
+    } catch (error) {
+        console.log(error)
+    }
+});
+
 
 cron.schedule('0 5,22 * * *', async () => {
     try {
