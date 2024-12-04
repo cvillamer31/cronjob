@@ -8,7 +8,7 @@ async function connectToDatabase() {
             password: process.env.PASSWORD_DB,
             database: process.env.DB,
         });
-        // console.log('Connected to MySQL!');
+        console.log('Connected to MySQL!');
         return connection;
     } catch (err) {
         console.error('Failed to connect to MySQL:', err.message);
