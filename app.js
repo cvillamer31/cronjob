@@ -10,8 +10,9 @@ app.use(express.json());
 
 console.log('DB Connection Config:', {
     host: process.env.HOST,
-    user: process.env.USER,
+    user: process.env.USER_DATA,
     database: process.env.DB,
+    password: process.env.PASSWORD_DB,
     port: process.env.PORT,
 });
 
