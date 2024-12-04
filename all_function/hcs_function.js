@@ -5,7 +5,7 @@ const https = require('https');
 
 
 const agent = new https.Agent({
-    rejectUnauthorized: true, // Disable SSL certificate validation
+    rejectUnauthorized: false, // Disable SSL certificate validation
 });
 
 
@@ -39,8 +39,8 @@ async function send_to_HCS(json_data){
         },
         "logDate": date_out,
         "logTime": json_data.time_data,
-        "deviceIdentifier": process.env.IDENTFIER,
-        "secret": process.env.SECRET
+        "deviceIdentifier": 7,
+        "secret": "213"
     }
 
 
