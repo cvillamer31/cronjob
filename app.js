@@ -16,7 +16,19 @@ app.use(express.json());
 //     // port: process.env.PORT,
 // });
 
+function logMemoryUsage() {
+    const memoryUsage = process.memoryUsage();
 
+    console.log('Memory Usage:');
+    console.log(`- RSS (Resident Set Size): ${(memoryUsage.rss / 1024 / 1024).toFixed(2)} MB`);
+    console.log(`- Heap Total: ${(memoryUsage.heapTotal / 1024 / 1024).toFixed(2)} MB`);
+    console.log(`- Heap Used: ${(memoryUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+    console.log(`- External: ${(memoryUsage.external / 1024 / 1024).toFixed(2)} MB`);
+    console.log(`- Array Buffers: ${(memoryUsage.arrayBuffers / 1024 / 1024).toFixed(2)} MB`);
+}
+setInterval(() => {
+    logMemoryUsage();
+}, 5000)
 
 const PORT = process.env.PORT || 5000;
 

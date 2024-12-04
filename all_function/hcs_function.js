@@ -10,6 +10,9 @@ const agent = new https.Agent({
 
 
 
+
+;
+
 function formatDate(inputDate) {
     const date = new Date(inputDate);
     const year = date.getFullYear();
