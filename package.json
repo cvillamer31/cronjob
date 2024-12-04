@@ -1,0 +1,29 @@
+{
+  "name": "cronjob",
+  "version": "1.0.0",
+  "description": "Run the cronjob to automate the process",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "jest"
+  },
+  "author": "Christian Villamer",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.8",
+    "dotenv": "^16.4.6",
+    "express": "^4.21.1",
+    "moment-timezone": "^0.5.46",
+    "mysql2": "^3.11.5",
+    "node-cron": "^3.0.3",
+    "nodemon": "^3.1.7"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": ["<rootDir>/test/**/*.test.js"],
+    "verbose": true
+  }
+}
