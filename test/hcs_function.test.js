@@ -1,7 +1,13 @@
 const { formatDate, getIn_today, sendin_in_out, getOut_today } = require('../all_function/hcs_function');
 const { expect, test } = require('@jest/globals');
 const moment = require('moment-timezone');
-
+const memoryUsage = () => {
+  const usage = process.memoryUsage();
+  console.log(`Heap Total: ${usage.heapTotal / 1024 / 1024} MB`);
+  console.log(`Heap Used: ${usage.heapUsed / 1024 / 1024} MB`);
+  console.log(`External: ${usage.external / 1024 / 1024} MB`);
+  console.log(`RSS: ${usage.rss / 1024 / 1024} MB`);
+};
 
 
 const now = moment().tz('Asia/Manila');
@@ -32,6 +38,7 @@ const seninout = false;
 (seninout ? test.skip : test)('Test for sendin_in_out function', async () => {
     
   const result = await sendin_in_out(date);
+  memoryUsage();
   // console.log(result)
   expect(result).toBe(result);
 });
