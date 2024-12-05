@@ -36,14 +36,21 @@ app.get('/health', (req, res) => {
 
 // every Seconds = * * * * * *
 // every Min =  * * * * *
-// cron.schedule('* * * * * *', async () => {
-//     try {
-//         const data_val = await sendin_in_out(date);
-//         // console.log(data_val)
-//     } catch (error) {
-//         console.log(error)
-//     }
-// });
+cron.schedule('*/50 * * * * *', async () => {
+    try {
+        
+        // console.log(data_val)
+
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+        console.log(`Triggered at: ${now}`);
+        const data_val = await sendin_in_out(date);
+        // console.log(`Hours: ${hours}, Minutes: ${minutes}`);
+    } catch (error) {
+        console.log(error)
+    }
+});
 
 // cron.schedule('* * * * * *', async () => {
 //     try {
@@ -60,7 +67,7 @@ app.get('/health', (req, res) => {
 // });
 
 
-cron.schedule('0 7,22 * * *', async () => {
+cron.schedule('0 5,22 * * *', async () => {
     try {
         const data_val = await sendin_in_out(date);
 

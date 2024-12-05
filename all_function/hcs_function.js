@@ -59,11 +59,11 @@ async function send_to_HCS(json_data){
 
     try {
         const response = await axios.post(url, data_to_send, { httpsAgent: agent });
-        console.log('Response:', response.data);
+        // console.log('Response:', response.data);
         return response.data; // Return the successful response data
     } catch (error) {
         // console.error('Error:', error.response ? error.response.data : error.message);
-        console.log(data_to_send)
+        // console.log(data_to_send)
         return { error: error.response ? error.response.data : error.message }; // Return the error
     }
 }
@@ -72,9 +72,9 @@ async function getIn_today(date){
     try {
         const connection = await connectToDatabase(); 
         const [rows] = await connection.query( `
-            SELECT date AS date_data, in_time AS time_data , in_location_id, users.PIN, 1 AS TypeOfTag FROM attendances 
+            SELECT date AS date_data, in_time AS time_data , in_location_id, users.PIN, 1 AS TypeOfTag, attendances.id AS ID_DATA FROM attendances 
             INNER JOIN users ON attendances.worker_id = users.id
-            WHERE DATE(date) = ?
+            WHERE DATE(date) = ? AND isSentToHCS_in = 0
             `, [date]);
         await connection.end();  // Close the connection after query
         return rows;
@@ -89,9 +89,9 @@ async function getOut_today(date){
     try {
         const connection = await connectToDatabase(); 
         const [rows] = await connection.query( `
-            SELECT date_out AS date_data, out_time AS time_data, out_location_id, users.PIN, 2 AS TypeOfTag  FROM attendances 
+            SELECT date_out AS date_data, out_time AS time_data, out_location_id, users.PIN, 2 AS TypeOfTag, attendances.id AS ID_DATA   FROM attendances 
             INNER JOIN users ON attendances.worker_id = users.id
-            WHERE DATE(date_out) = ?
+            WHERE DATE(date_out) = ? AND isSentToHCS_out = 0
             `, [date]);
         await connection.end();  // Close the connection after query
         return rows;
@@ -101,7 +101,32 @@ async function getOut_today(date){
     }
 }
 
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
+
+async function updateTheStatus(time_identity, id){
+    try {
+        console.log(time_identity + " <> " + id)
+        if(time_identity == "I"){
+            const connection = await connectToDatabase(); 
+            await connection.query( `
+                UPDATE attendances SET isSentToHCS_in = 1 WHERE id = ?
+                `, [id]);
+            await connection.end();  // Close the connection after query
+        }else if(time_identity == "O") {
+            const connection = await connectToDatabase(); 
+            await connection.query( `
+                UPDATE attendances SET isSentToHCS_out = 1 WHERE id = ?
+                `, [id]);
+            await connection.end();  // Close the connection after query
+        }
+        
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 async function sendin_in_out(date) {
     
@@ -109,21 +134,38 @@ async function sendin_in_out(date) {
     try {
 
         const In_data = await getIn_today(date);
-
+        console.log("starting in data...", In_data.length);
         for (let index = 0; index <= In_data.length - 1; index++) {
             const element = In_data[index];
+            // console.log(element)
             const data = await send_to_HCS(element)
-            console.log("in", data)
+            if(data.status == 0){
+                await updateTheStatus("I", element.ID_DATA)
+                console.log("I - " + element.ID_DATA + " . SENT!");
+            }
+            // console.log("in", data.status)
         }
-        const Out_data = await getOut_today(date);
+        console.log("Ending in data...");
+        // console.log("Delaying before processing Out_data...");
+        await delay(5000); // 5000 ms = 5 seconds delay
 
+
+        
+        const Out_data = await getOut_today(date);
+        console.log("starting out data...", Out_data.length);
+        // console.log(Out_data.length)
         for (let index = 0; index <= Out_data.length - 1; index++) {
             const element = Out_data[index];
+            // console.log(element)
             const data = await send_to_HCS(element)
-            console.log("out",data)
+            if(data.status == 0){
+                await updateTheStatus("O", element.ID_DATA)
+                console.log("O - " + element.ID_DATA + " . SENT!");
+            }
+            // console.log("out",data.status)
         }
         
-
+        console.log("Ending out data...");
         // for (let index = 0; index <= In_data.length - 1; index++) {
         //     const element = In_data[index];
         //     const date_in = formatDate(element.date);
