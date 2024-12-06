@@ -17,13 +17,13 @@ async function email_sending(email, message, subject){
     let mailDetails = {
         from: 'cronjob@iteklabs.tech',
         to: email,
-        subject:'Transfer Mail',
+        subject: subject,
         // attachments: [{
         //     filename: 'Logo.png',
         //     path: __dirname,
         //     cid: 'logo'
         // }],
-        html:'<b>hello</b>'
+        html: message
     };
 
 
@@ -43,10 +43,10 @@ async function get_HtmlData(date){
     try {
         const connection = await connectToDatabase(); 
         const [rows] = await connection.query( `
-            SELECT attendances.id AS A_id, users.name AS U_Name, users.PIN AS U_PIN, date AS date_in, in_time AS time_in, date_out FROM attendances 
+            SELECT attendances.id AS A_id, users.name AS U_Name, users.PIN AS U_PIN, date AS date_in, in_time AS time_in, date_out, out_time, isSentToHCS_in , isSentToHCS_out  FROM attendances 
             INNER JOIN users ON attendances.worker_id = users.id
-            WHERE DATE(date) = ?
-            `, [date]);
+            WHERE DATE(date) = ? OR DATE(date_out) = ?
+            `, [date, date]);
         await connection.end();  // Close the connection after query
         return rows;
     } catch (err) {
@@ -56,4 +56,4 @@ async function get_HtmlData(date){
 }
 
 
-module.exports = { email_sending };
+module.exports = { email_sending, get_HtmlData };
