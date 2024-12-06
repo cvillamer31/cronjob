@@ -132,8 +132,9 @@ async function sendin_in_out(date) {
     
     
     try {
-
+        console.log(date)
         const In_data = await getIn_today(date);
+        console.log(In_data)
         console.log("starting in data...", In_data.length);
         for (let index = 0; index <= In_data.length - 1; index++) {
             const element = In_data[index];
@@ -147,7 +148,7 @@ async function sendin_in_out(date) {
         }
         console.log("Ending in data...");
         // console.log("Delaying before processing Out_data...");
-        await delay(5000); // 5000 ms = 5 seconds delay
+        // await delay(5000); // 5000 ms = 5 seconds delay
 
 
         
