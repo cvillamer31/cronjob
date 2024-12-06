@@ -27,7 +27,7 @@ const GetIout= true; // Change this condition as needed
   console.log(result)
   expect(result).toBe(result);
 });
-const seninout = false;
+const seninout = true;
 (seninout ? test.skip : test)('Test for sendin_in_out function', async () => {
     
   const result = await sendin_in_out(date);

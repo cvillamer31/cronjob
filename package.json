@@ -16,6 +16,7 @@
     "moment-timezone": "^0.5.46",
     "mysql2": "^3.11.5",
     "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.16",
     "nodemon": "^3.1.7"
   },
   "devDependencies": {
@@ -23,7 +24,9 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "testMatch": ["<rootDir>/test/**/*.test.js"],
+    "testMatch": [
+      "<rootDir>/test/**/*.test.js"
+    ],
     "verbose": true
   }
 }

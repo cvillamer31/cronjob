@@ -5,6 +5,7 @@ const moment = require('moment-timezone');
 const  { sendin_in_out }  = require('./all_function/hcs_function');
 
 
+
 const app = express();
 app.use(express.json());
 
@@ -36,7 +37,7 @@ app.get('/health', (req, res) => {
 
 // every Seconds = * * * * * *
 // every Min =  * * * * *
-cron.schedule('*/50 * * * * *', async () => {
+cron.schedule('*/5 * * * * *', async () => {
     try {
         
         // console.log(data_val)
@@ -66,20 +67,42 @@ cron.schedule('*/50 * * * * *', async () => {
 //     }
 // });
 
+// schedule report for 5am   11pm
+// cron.schedule('* * * * * *', async () => {
+//     try {
 
-cron.schedule('0 5,22 * * *', async () => {
-    try {
-        const data_val = await sendin_in_out(date);
-
-        const now = new Date();
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
-        console.log(`date: ${date}`)
-        // console.log(data_val)
-    } catch (error) {
-        console.log(error)
-    }
-});
+//         const now = new Date();
+//         let  hours = now.getHours();
+//         const minutes = now.getMinutes();
+//         const seconds = now.getSeconds();
+//         const ampm = hours >= 12 ? 'PM' : 'AM';
+//         hours = hours % 12;
+//         hours = hours || 12; // Replace 0 with 12
+//         const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${ampm}`;
+//         let dataTable = '';
+//         dataTable += '<table border="1">'
+//             dataTable += '<thead>'
+//                 dataTable += '<tr>'
+//                     dataTable += '<th>ID</th>'
+//                     dataTable += '<th>Date</th>'
+//                     dataTable += '<th>IN</th>'
+//                     dataTable += '<th>OUT</th>'
+//                     dataTable += '<th>Status HCS (IN)</th>'
+//                     dataTable += '<th>Status HCS (OUT)</th>'
+//                     dataTable += '<th>Remarks</th>'
+//                 dataTable += '</tr>'
+//             dataTable += '</thead>'
+//             dataTable += '<tbody>'
+//             //function here
+//             dataTable += '</tbody>'
+//         dataTable += '</table>'
+//         console.log(dataTable)
+//         // console.log(`date: ${date} -  ${formattedTime}`)
+//         // console.log(data_val)
+//     } catch (error) {
+//         console.log(error)
+//     }
+// });
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT} 🚀`);
