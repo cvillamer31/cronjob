@@ -37,60 +37,48 @@ app.get('/health', (req, res) => {
 
 // every Seconds = * * * * * *
 // every Min =  * * * * *
-cron.schedule('*/5 * * * * *', async () => {
-    try {
-        
-        // console.log(data_val)
-
-        const now = new Date();
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
-        console.log(`Triggered at: ${now}`);
-        const data_val = await sendin_in_out(date);
-        // console.log(`Hours: ${hours}, Minutes: ${minutes}`);
-
-        
-    } catch (error1) {
-        exec('pm2 restart 29', (error, stdout, stderr) => {
-            if (error) {
-              console.error(`Error: ${error.message}`);
-              return;
-            }
-            if (stderr) {
-              console.error(`Stderr: ${stderr}`);
-              return;
-            }
-            console.log(`Stdout: ${stdout}`);
-          });
-        console.log(error1)
-
-        const now = new Date();
-        let  hours = now.getHours();
-        const minutes = now.getMinutes();
-        const seconds = now.getSeconds();
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours || 12; // Replace 0 with 12
-        const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${ampm}`;
-
-    const result = await email_sending('christian.villamer@iteklabs.tech;cvillamer13@gmail.com', "Encounter problem! \n " + error1, `Problem ${date} - ${formattedTime}`);
-    }
-        
-});
-
-// cron.schedule('* * * * * *', async () => {
+// cron.schedule('*/5 * * * * *', async () => {
 //     try {
+        
+//         // console.log(data_val)
+
 //         const now = new Date();
 //         const hours = now.getHours();
 //         const minutes = now.getMinutes();
-
 //         console.log(`Triggered at: ${now}`);
-//         console.log(`Hours: ${hours}, Minutes: ${minutes}`);
-//         // console.log(data_val)
-//     } catch (error) {
-//         console.log(error)
+//         const data_val = await sendin_in_out(date);
+//         // console.log(`Hours: ${hours}, Minutes: ${minutes}`);
+
+        
+//     } catch (error1) {
+//         exec('pm2 restart 29', (error, stdout, stderr) => {
+//             if (error) {
+//               console.error(`Error: ${error.message}`);
+//               return;
+//             }
+//             if (stderr) {
+//               console.error(`Stderr: ${stderr}`);
+//               return;
+//             }
+//             console.log(`Stdout: ${stdout}`);
+//           });
+//         console.log(error1)
+
+//         const now = new Date();
+//         let  hours = now.getHours();
+//         const minutes = now.getMinutes();
+//         const seconds = now.getSeconds();
+//         const ampm = hours >= 12 ? 'PM' : 'AM';
+//         hours = hours % 12;
+//         hours = hours || 12; // Replace 0 with 12
+//         const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${ampm}`;
+
+//     const result = await email_sending('christian.villamer@iteklabs.tech;cvillamer13@gmail.com', "Encounter problem! \n " + error1, `Problem ${date} - ${formattedTime}`);
 //     }
+        
 // });
+
+
 
 // schedule report for 5am   11pm
 cron.schedule('0 5,12,17,23 * * *', async () => {
