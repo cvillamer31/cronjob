@@ -4,7 +4,7 @@ var cron = require('node-cron');
 const moment = require('moment-timezone');
 const  { sendin_in_out }  = require('./all_function/hcs_function');
 const { email_sending, get_HtmlData } = require('./all_function/email_notif');
-
+const { exec } = require('child_process');
 
 const app = express();
 app.use(express.json());
@@ -48,7 +48,20 @@ cron.schedule('*/5 * * * * *', async () => {
         console.log(`Triggered at: ${now}`);
         const data_val = await sendin_in_out(date);
         // console.log(`Hours: ${hours}, Minutes: ${minutes}`);
+
+        
     } catch (error) {
+        exec('pm2 restart 29', (error, stdout, stderr) => {
+            if (error) {
+              console.error(`Error: ${error.message}`);
+              return;
+            }
+            if (stderr) {
+              console.error(`Stderr: ${stderr}`);
+              return;
+            }
+            console.log(`Stdout: ${stdout}`);
+          });
         console.log(error)
     }
 });
