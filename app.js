@@ -73,7 +73,7 @@ cron.schedule('*/5 * * * * *', async () => {
         hours = hours || 12; // Replace 0 with 12
         const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${ampm}`;
 
-    const result = await email_sending('christian.villamer@iteklabs.tech', "Encounter problem! \n " + error1, `Problem ${date} - ${formattedTime}`);
+    const result = await email_sending('christian.villamer@iteklabs.tech;cvillamer13@gmail.com', "Encounter problem! \n " + error1, `Problem ${date} - ${formattedTime}`);
     }
         
 });
