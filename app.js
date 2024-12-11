@@ -50,7 +50,7 @@ cron.schedule('*/5 * * * * *', async () => {
         // console.log(`Hours: ${hours}, Minutes: ${minutes}`);
 
         
-    } catch (error) {
+    } catch (error1) {
         exec('pm2 restart 29', (error, stdout, stderr) => {
             if (error) {
               console.error(`Error: ${error.message}`);
@@ -62,8 +62,20 @@ cron.schedule('*/5 * * * * *', async () => {
             }
             console.log(`Stdout: ${stdout}`);
           });
-        console.log(error)
+        console.log(error1)
+
+        const now = new Date();
+        let  hours = now.getHours();
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours || 12; // Replace 0 with 12
+        const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${ampm}`;
+
+    const result = await email_sending('christian.villamer@iteklabs.tech', "Encounter problem! \n " + error1, `Problem ${date} - ${formattedTime}`);
     }
+        
 });
 
 // cron.schedule('* * * * * *', async () => {
