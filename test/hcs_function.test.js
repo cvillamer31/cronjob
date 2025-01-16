@@ -23,13 +23,14 @@ const GetIn = true; // Change this condition as needed
 
 const GetIout= true; // Change this condition as needed
 (GetIout ? test.skip : test)('Test for getOut_today function', async () => {
+
   const result = await getOut_today(date);
   console.log(result)
   expect(result).toBe(result);
 });
-const seninout = true;
+const seninout = false;
 (seninout ? test.skip : test)('Test for sendin_in_out function', async () => {
-    
+  const date = '2025-01-16';
   const result = await sendin_in_out(date);
   // console.log(result)
   expect(result).toBe(result);

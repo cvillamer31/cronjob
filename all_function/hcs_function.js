@@ -84,6 +84,22 @@ async function getIn_today(date){
     }
 }
 
+async function getIn_today_ALL(){
+    try {
+        const connection = await connectToDatabase(); 
+        const [rows] = await connection.query( `
+            SELECT date AS date_data, in_time AS time_data , in_location_id, users.PIN, 1 AS TypeOfTag, attendances.id AS ID_DATA FROM attendances 
+            INNER JOIN users ON attendances.worker_id = users.id
+            WHERE isSentToHCS_in = 0
+            `, []);
+        await connection.end();  // Close the connection after query
+        return rows;
+    } catch (err) {
+        console.error('Error fetching data:', err.message);
+        throw err; // Propagate the error to the caller
+    }
+}
+
 
 async function getOut_today(date){
     try {
@@ -93,6 +109,22 @@ async function getOut_today(date){
             INNER JOIN users ON attendances.worker_id = users.id
             WHERE DATE(date_out) = ? AND isSentToHCS_out = 0
             `, [date]);
+        await connection.end();  // Close the connection after query
+        return rows;
+    } catch (err) {
+        console.error('Error fetching data:', err.message);
+        throw err; // Propagate the error to the caller
+    }
+}
+
+async function getOut_today_ALL(){
+    try {
+        const connection = await connectToDatabase(); 
+        const [rows] = await connection.query( `
+            SELECT date_out AS date_data, out_time AS time_data, out_location_id, users.PIN, 2 AS TypeOfTag, attendances.id AS ID_DATA   FROM attendances 
+            INNER JOIN users ON attendances.worker_id = users.id
+            WHERE isSentToHCS_out = 0
+            `, []);
         await connection.end();  // Close the connection after query
         return rows;
     } catch (err) {
@@ -205,4 +237,49 @@ async function sendin_in_out(date) {
 }
 
 
-module.exports = { formatDate, getIn_today, sendin_in_out, getOut_today  };
+async function sending_ALL(){
+    try {
+        // console.log(date)
+        const In_data = await getIn_today_ALL();
+        // console.log(In_data)
+        console.log("starting in data...", In_data.length);
+        for (let index = 0; index <= In_data.length - 1; index++) {
+            const element = In_data[index];
+            // console.log(element)
+            const data = await send_to_HCS(element)
+            if(data.status == 0){
+                await updateTheStatus("I", element.ID_DATA)
+                console.log("I - " + element.ID_DATA + " . SENT!");
+            }
+            // console.log("in", data.status)
+        }
+        console.log("Ending in data...");
+        // console.log("Delaying before processing Out_data...");
+        // await delay(5000); // 5000 ms = 5 seconds delay
+
+
+        
+        const Out_data = await getOut_today_ALL();
+        console.log("starting out data...", Out_data.length);
+        // console.log(Out_data.length)
+        for (let index = 0; index <= Out_data.length - 1; index++) {
+            const element = Out_data[index];
+            // console.log(element)
+            const data = await send_to_HCS(element)
+            if(data.status == 0){
+                await updateTheStatus("O", element.ID_DATA)
+                console.log("O - " + element.ID_DATA + " . SENT!");
+            }
+            // console.log("out",data.status)
+        }
+        
+        console.log("Ending out data...");
+
+        return { status: 200, message: "Done Running...", data_in: In_data,  data_out: Out_data  }
+    } catch (error) {
+        return { status: 500, message: error }
+    }
+}
+
+
+module.exports = { formatDate, getIn_today, sendin_in_out, getOut_today, sending_ALL  };

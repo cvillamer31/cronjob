@@ -1,7 +1,7 @@
 const { expect, test } = require('@jest/globals');
 const { email_sending, get_HtmlData } = require('../all_function/email_notif');
 
-const emailtest = false;
+const emailtest = true;
 (emailtest ? test.skip : test)('Test for email function', async () => {
     const HTML = await get_HtmlData('2024-12-06');
     //   const result = await email_sending('christian.villamer@iteklabs.tech', 'TEST');
