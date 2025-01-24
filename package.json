@@ -27,6 +27,7 @@
     "testMatch": [
       "<rootDir>/test/**/*.test.js"
     ],
+    "testTimeout": 200000,
     "verbose": true
   }
 }

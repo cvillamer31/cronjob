@@ -37,7 +37,7 @@ app.get('/health', (req, res) => {
 
 // every Seconds = * * * * * *
 // every Min =  * * * * *
-cron.schedule('*/5 * * * * *', async () => {
+cron.schedule('0 * * * *', async () => {
     try {
         
         // console.log(data_val)
