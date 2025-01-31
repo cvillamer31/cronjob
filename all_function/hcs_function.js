@@ -161,8 +161,6 @@ async function updateTheStatus(time_identity, id){
 }
 
 async function sendin_in_out(date) {
-    
-    
     try {
         // console.log(date)
         const In_data = await getIn_today(date);
@@ -282,4 +280,20 @@ async function sending_ALL(){
 }
 
 
-module.exports = { formatDate, getIn_today, sendin_in_out, getOut_today, sending_ALL  };
+async function retry_send(){
+    try {
+        const connection = await connectToDatabase(); 
+        const [rows] = await connection.query( `
+            SELECT date AS date_data, in_time AS time_data , in_location_id, users.PIN, 1 AS TypeOfTag, attendances.id AS ID_DATA FROM attendances 
+            INNER JOIN users ON attendances.worker_id = users.id
+            WHERE isSentToHCS_in = 0
+            `, []);
+        await connection.end();  // Close the connection after query
+        return rows;
+    } catch (err) {
+        console.error('Error fetching data:', err.message);
+        throw err; // Propagate the error to the caller
+    }
+}
+
+module.exports = { formatDate, getIn_today, sendin_in_out, getOut_today, sending_ALL,retry_send  };
