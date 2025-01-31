@@ -9,6 +9,7 @@ const { exec } = require('child_process');
 const os = require('os');
 const { getMAC, isMAC } = require('getmac')
 const mysql = require('mysql2/promise');
+const axios = require('axios');
 
 const app = express();
 app.use(cors()); // Allow all origins
@@ -242,38 +243,42 @@ async function connectToDatabase() {
     }
 }
 
+const heartbeats = new Map();
+app.post('/heartbeat', (req, res) => {
+    const { pc_id, token, mac_address } = req.body;
+    // console.log(Date.now())
+    heartbeats.set(pc_id, { timestamp: Date.now(), mac_address });
+    // console.log(req.body)
+    res.send('Heartbeat received');
+  });
+  app.get('/status_pc', (req, res) => {
+    const status = {};
+    const now = Date.now();
+    const OFFLINE_THRESHOLD = 2 * 1000;
+  
+    heartbeats.forEach((timestamp, pcId) => {
+    status[pcId] = {
+        status: (now - timestamp.timestamp) < OFFLINE_THRESHOLD ? 'online' : 'offline',
+        mac_address: timestamp.mac_address
+      };
+    //   console.log(timestamp.timestamp)
+    //   status[pcId] = timestamp.mac_address;
+    });
+  
+    res.json(status);
+  });
 
-app.post('/checking_health', (req, res) => {
-    console.log(req.body)
-    res.json(req.body);
+cron.schedule('* * * * * *', async () => {
+    try {
+        const now = moment().tz('Asia/Manila');
+        const date = now.format('YYYY-MM-DD');
+        const time = now.format('HH:mm:ss');
+        
+    } catch (error1) {
+        console.log(error1)
+    }
+        
 });
-
-// cron.schedule('*/10 * * * * *', async () => {
-//     try {
-//         const now = moment().tz('Asia/Manila');
-//         const date = now.format('YYYY-MM-DD');
-//         const time = now.format('HH:mm:ss');
-
-//         const connection = await connectToDatabase(); 
-//         const [rows] = await connection.query( `SELECT * FROM areas WHERE mac_address IS NOT NULL`, []);
-
-//         for (let index = 0; index <= rows.length-1; index++) {
-//             const element = rows[index];
-//             const connection_bet = await connectToDatabase_beat(); 
-//             const [rows_beat] = await connection_bet.query( `SELECT * FROM heart_beat WHERE mac_address = ? AND date = ? AND time = ?`, [element.mac_address, date, time]);
-//             console.log(rows_beat)
-            
-//         }
-
-        
-//         await connection.end(); 
-
-        
-//     } catch (error1) {
-//         console.log(error1)
-//     }
-        
-// });
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT} 🚀`);
