@@ -254,7 +254,7 @@ app.post('/heartbeat', (req, res) => {
   app.get('/status_pc', (req, res) => {
     const status = {};
     const now = Date.now();
-    const OFFLINE_THRESHOLD = 2 * 1000;
+    const OFFLINE_THRESHOLD = 10 * 1000;
   
     heartbeats.forEach((timestamp, pcId) => {
     status[pcId] = {
