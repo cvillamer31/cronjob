@@ -263,7 +263,16 @@ async function connectToDatabase() {
         throw err;
     }
 }
-
+async function getLocation(mac_address){
+    try {
+        const connection = await connectToDatabase(); 
+        const [rows] = await connection.query( `SELECT * FROM areas WHERE mac_address = ?`, [mac_address]);
+        await connection.end();
+        return rows;
+    } catch (error) {
+        
+    }
+}
 const heartbeats = new Map();
 app.post('/heartbeat', (req, res) => {
     const { pc_id, token, mac_address } = req.body;
@@ -277,11 +286,12 @@ app.post('/heartbeat', (req, res) => {
     const now = Date.now();
     const OFFLINE_THRESHOLD = 30 * 1000;
   
-    heartbeats.forEach((timestamp, pcId) => {
+    heartbeats.forEach( async (timestamp, pcId) => {
+        console.log(await getLocation(timestamp.mac_address))
     status[pcId] = {
         status: (now - timestamp.timestamp) < OFFLINE_THRESHOLD ? 'online' : 'offline',
         mac_address: timestamp.mac_address,
-        location_data: "Hello"
+        location_data: "test"
       };
     //   console.log(timestamp.timestamp)
     //   status[pcId] = timestamp.mac_address;
