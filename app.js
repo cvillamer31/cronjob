@@ -274,10 +274,12 @@ async function getLocation(mac_address){
     }
 }
 const heartbeats = new Map();
-app.post('/heartbeat', (req, res) => {
+app.post('/heartbeat', async (req, res) => {
     const { pc_id, token, mac_address } = req.body;
+    const loc_data = await getLocation(timestamp.mac_address)
+    const name = loc_data[0].name
     // console.log(Date.now())
-    heartbeats.set(pc_id, { timestamp: Date.now(), mac_address });
+    heartbeats.set(pc_id, { timestamp: Date.now(), mac_address, name });
     // console.log(req.body)
     res.send('Heartbeat received');
   });
@@ -292,7 +294,7 @@ app.post('/heartbeat', (req, res) => {
     status[pcId] = {
         status: (now - timestamp.timestamp) < OFFLINE_THRESHOLD ? 'online' : 'offline',
         mac_address: timestamp.mac_address,
-        location_data: "test"
+        location_data: timestamp.name
       };
     //   console.log(timestamp.timestamp)
     //   status[pcId] = timestamp.mac_address;
