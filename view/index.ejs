@@ -121,20 +121,53 @@
     <!-- <script src="../public/js/moment.js"></script> -->
         <script>
             // tbody_data
-            $(document).ready(function() {
+            // let  data_table = document.getElementById("tbody_data");
+            
+            function data_table_func(x){
+                let  data_table = "";
+                // console.log("test")
                 fetch('https://cronjob.iteklabs.tech/status_pc')
                     .then(response => response.json())
                     .then(data => {
                         Object.entries(data).forEach(([pcName, details]) => {
-                        console.log(`PC Name: ${pcName}`);
-                        console.log(`Status: ${details.status}`);
-                        console.log(`MAC Address: ${details.mac_address}`);
-                        console.log('----------------------');
+                        data_table += "<tr>";
+                            data_table += "<td>";
+                                data_table += x;
+                            data_table += "</td>";
+                            data_table += "<td>";
+                                data_table += pcName;
+                            data_table += "</td>";
+                            data_table += "<td>";
+                                data_table += details.mac_address;
+                            data_table += "</td>";
+                            data_table += "<td>";
+                                data_table += x;
+                            data_table += "</td>";
+                            data_table += "<td>";
+                                if(details.status == "online"){
+                                    data_table += '<span class="badge badge-success">'+details.status+'</span>';
+                                }else{
+                                    data_table += '<span class="badge badge-danger">'+details.status+'</span>';
+                                }
+                                
+                            data_table += "</td>";
+                        data_table += "<tr>";
+                            // console.log(data_table)
+                        document.getElementById("tbody_data").innerHTML = data_table;
+                            x++;
                         });
                     })
                     .catch(error => console.error('Error fetching data:', error));
+            }
 
+
+            
+            var x =1 ;
+            $(document).ready(function() {
+                // data_table_func(x);
+                setInterval(data_table_func(x), 1000);
             })
+            setInterval(() => data_table_func(x), 3000);
         </script>
 
         <!--**********************************
