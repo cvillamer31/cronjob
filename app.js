@@ -10,18 +10,39 @@ const os = require('os');
 const { getMAC, isMAC } = require('getmac')
 const mysql = require('mysql2/promise');
 const axios = require('axios');
+const ejs = require('ejs');
+const path = require("path");
+const bodyParser = require('body-parser');
+const flash = require('connect-flash');
+var session = require('express-session');
+const cookieParser = require('cookie-parser');
+
+
 
 const app = express();
 app.use(cors()); // Allow all origins
-app.use(cors({
-    origin: 'https://bms.jakagroup.com',
-    methods: ['GET', 'POST'],
-    // allowedHeaders: ['Content-Type', 'Authorization']
+// app.use(cors({
+//     origin: 'https://bms.jakagroup.com',
+//     methods: ['GET', 'POST'],
+//     // allowedHeaders: ['Content-Type', 'Authorization']
+//   }));
+
+
+  
+app.use(session({
+    secret: 'this is my secretkey',
+    resave: false,
+    cookie: { maxAge: 1000 * 60 },
+    saveUninitialized: true,
+    // store: store,
   }));
 
+app.use(flash());
 
 app.use(express.json());
-
+app.set('view engine', 'ejs');
+app.set("views", path.join(__dirname, "view"));
+app.use(express.static(path.join(__dirname, "public")));
 
 const PORT = process.env.PORT || 5000;
 
@@ -273,12 +294,14 @@ cron.schedule('* * * * * *', async () => {
         const now = moment().tz('Asia/Manila');
         const date = now.format('YYYY-MM-DD');
         const time = now.format('HH:mm:ss');
-        
+        // console.log(time)
     } catch (error1) {
         console.log(error1)
     }
         
 });
+const login_router = require("./routes/login");
+app.use("/", login_router);
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT} 🚀`);
