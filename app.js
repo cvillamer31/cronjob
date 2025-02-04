@@ -276,7 +276,7 @@ async function getLocation(mac_address){
 const heartbeats = new Map();
 app.post('/heartbeat', async (req, res) => {
     const { pc_id, token, mac_address } = req.body;
-    const loc_data = await getLocation(timestamp.mac_address)
+    const loc_data = await getLocation(mac_address)
     const name = loc_data[0].name
     // console.log(Date.now())
     heartbeats.set(pc_id, { timestamp: Date.now(), mac_address, name });
