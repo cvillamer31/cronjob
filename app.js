@@ -287,11 +287,12 @@ app.post('/heartbeat', (req, res) => {
     const OFFLINE_THRESHOLD = 30 * 1000;
   
     heartbeats.forEach( async (timestamp, pcId) => {
-        console.log(await getLocation(timestamp.mac_address))
+        const loc_data = await getLocation(timestamp.mac_address)
+
     status[pcId] = {
         status: (now - timestamp.timestamp) < OFFLINE_THRESHOLD ? 'online' : 'offline',
         mac_address: timestamp.mac_address,
-        location_data: "test"
+        location_data: loc_data[0].name
       };
     //   console.log(timestamp.timestamp)
     //   status[pcId] = timestamp.mac_address;
