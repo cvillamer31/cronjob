@@ -309,14 +309,126 @@ app.post('/heartbeat', async (req, res) => {
     res.json(status);
   });
 
-cron.schedule('* * * * * *', async () => {
+
+    async function sendoutside(data, stat){
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: 'https://hrms.iteklabs.tech/api/inout',
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            data : data,
+            timeout:30000
+        };
+
+        const response = await axios.request(config);
+        const data_response = response.data;
+
+        
+
+        try {
+            var fingerprintd= data_response.message.finger_print_id;
+            var date_time= data_response.message.in_out_time;
+            var type_return = data_response.message.type;
+            var bms_id = data_response.message.bms_id;
+            const connection = await connectToDatabase();
+            console.log(stat, data_response.status, rows[0])
+            if (data_response.status === 200) {
+                const [rows] = await connection.query( `SELECT * FROM users WHERE pin = ?`, [fingerprintd]);
+
+                const formattedDate = moment
+                .tz(`${date_time}`, "Asia/Manila")
+                .format("YYYY-MM-DD");
+
+                var user_id = rows[0].id;
+                console.log(bms_id)
+                if (type_return === "I") {
+                    updateQuery = `UPDATE attendances SET isSentToHCS_in = true WHERE worker_id = ? AND date = ? AND id = ?`;
+                } else if (type_return === "O") {
+                    updateQuery = `UPDATE attendances SET isSentToHCS_out = true WHERE worker_id = ? AND date_out = ? AND id = ?`;
+                }
+
+                if (updateQuery) {
+                    await connection.query(updateQuery, [user_id, formattedDate, bms_id]);
+                }
+
+                await connection.end();
+            } else {
+                // console.log("Failed to send data:", data_response.message);
+                await connection.end();
+            }
+            
+
+
+            
+        } catch (error) {
+            if (error.response?.status === 429) {
+                const retryAfter = error.response.headers["retry-after"] || 1;
+                console.log(`Rate limit reached. Retrying after ${retryAfter} seconds...`);
+                await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+                return sendoutside(data); // Retry after waiting
+            }
+    
+        }
+    }
+
+cron.schedule('0,30 * * * *', async () => {
     try {
         const now = moment().tz('Asia/Manila');
         const date = now.format('YYYY-MM-DD');
         const time = now.format('HH:mm:ss');
-        // console.log(time)
-    } catch (error1) {
-        console.log(error1)
+        const connection = await connectToDatabase(); 
+        console.log(time)
+        // bms_id
+        const [rows] = await connection.query( `SELECT attendances.date AS date, attendances.in_time AS in_time, users.pin AS pin, attendances.id AS bms_id FROM attendances LEFT JOIN users ON users.id = attendances.worker_id WHERE date = ? AND isSentToHCS_in = false `, [date]);
+
+        for (const row of rows) {
+            const formattedDate = moment
+                .tz(`${moment(row.date).format("YYYY-MM-DD")} ${row.in_time}`, "Asia/Manila")
+                .format("YYYY-MM-DD HH:mm:ss");
+
+            const data_in = {
+                PIN: row.pin,
+                date_time: formattedDate,
+                type: "I",
+                bms_id: row.bms_id
+            };
+            console.log(data_in)
+            await sendoutside(data_in, "G");
+        }
+         // Fetch OUT records
+         const [rows_out] = await connection.query(
+            `SELECT attendances.date_out AS date_out, attendances.out_time AS out_time, users.pin AS pin, attendances.id AS bms_id FROM attendances 
+             LEFT JOIN users ON users.id = attendances.worker_id 
+             WHERE date_out = ? AND isSentToHCS_out = false`, 
+            [date]
+        );
+        
+        for (const row of rows_out) {
+            const formattedDate = moment
+                .tz(`${moment(row.date_out).format("YYYY-MM-DD")} ${row.out_time}`, "Asia/Manila")
+                .format("YYYY-MM-DD HH:mm:ss");
+
+            const data_out = {
+                PIN: row.pin,
+                date_time: formattedDate,
+                type: "O",
+                bms_id: row.bms_id
+            };
+            console.log(data_out)
+            await sendoutside(data_out, "G");
+        }
+        await connection.end();
+        // console.log(date)
+    } catch (error) {
+        console.log(error.response?.config.data)
+        if (error.response?.status === 429) {
+            const retryAfter = error.response.headers["retry-after"] || 1;
+            console.log(`Rate limit reached. Retrying after ${retryAfter} seconds...`);
+            await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+            await sendoutside(error.response?.config.data, "R"); // Retry after waiting
+        }
     }
         
 });
